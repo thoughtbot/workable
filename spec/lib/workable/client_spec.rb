@@ -29,8 +29,9 @@ describe Workable::Client do
       stub_request(:get, 'https://www.workable.com/spi/v3/accounts/subdomain/members')
         .to_return(status: 200, body: members_json_fixture)
 
-      expect(client.members).to be_kind_of(Array)
-      expect(client.members[0]).to eq(
+      expect(client.members).to be_kind_of(Workable::Collection)
+      expect(client.members.data).to be_kind_of(Array)
+      expect(client.members.data[0]).to eq(
         'id' => '13e0eb0e',
         'name' => 'Eduardo Vallente',
         'headline' => 'Operations Manager',

@@ -41,7 +41,7 @@ module Workable
 
     # returns a collection of your account members
     def members
-      @transform_to.apply(:member, get_request('members')['members'])
+      build_collection('members', :member, 'members', {})
     end
 
     # returns a collection of your account external recruiters
