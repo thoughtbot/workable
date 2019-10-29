@@ -18,7 +18,7 @@ describe Workable::Client do
 
   describe '#about' do
     it 'returns information about company as a hash' do
-      stub_request(:get, 'https://www.workable.com/spi/v3/accounts/subdomain/')
+      stub_request(:get, 'https://subdomain.workable.com/spi/v3/')
         .to_return(status: 200, body: about_json_fixture)
       expect(client.about['name']).to eq('Groove Tech')
     end
@@ -26,7 +26,7 @@ describe Workable::Client do
 
   describe '#members' do
     it 'returns array of members' do
-      stub_request(:get, 'https://www.workable.com/spi/v3/accounts/subdomain/members')
+      stub_request(:get, 'https://subdomain.workable.com/spi/v3/members')
         .to_return(status: 200, body: members_json_fixture)
 
       expect(client.members).to be_kind_of(Workable::Collection)
@@ -43,7 +43,7 @@ describe Workable::Client do
 
   describe '#recruiters' do
     it 'returns array of recruiters' do
-      stub_request(:get, 'https://www.workable.com/spi/v3/accounts/subdomain/recruiters')
+      stub_request(:get, 'https://subdomain.workable.com/spi/v3/recruiters')
         .to_return(status: 200, body: recruiters_json_fixture)
 
       expect(client.recruiters).to be_kind_of(Array)
@@ -57,7 +57,7 @@ describe Workable::Client do
 
   describe '#stages' do
     it 'returns array of stages' do
-      stub_request(:get, 'https://www.workable.com/spi/v3/accounts/subdomain/stages')
+      stub_request(:get, 'https://subdomain.workable.com/spi/v3/stages')
         .to_return(status: 200, body: stages_json_fixture)
 
       expect(client.stages).to be_kind_of(Array)
@@ -73,7 +73,7 @@ describe Workable::Client do
   describe '#jobs' do
     context 'happy path' do
       before do
-        stub_request(:get, 'https://www.workable.com/spi/v3/accounts/subdomain/jobs')
+        stub_request(:get, 'https://subdomain.workable.com/spi/v3/jobs')
           .with(headers: headers)
           .to_return(status: 200, body: jobs_index_json_fixture)
       end
@@ -86,7 +86,7 @@ describe Workable::Client do
       end
 
       it 'includes next page method that returns next collection' do
-        stub_request(:get, 'https://www.workable.com/spi/v3/accounts/subdomain/jobs?limit=3&since_id=2700d6df')
+        stub_request(:get, 'https://subdomain.workable.com/spi/v3/jobs?limit=3&since_id=2700d6df')
           .with(headers: headers)
           .to_return(status: 200, body: jobs_index_json_fixture)
 
@@ -98,14 +98,14 @@ describe Workable::Client do
 
     context 'sad path' do
       it 'raises exception on not authorized error (401)' do
-        stub_request(:get, 'https://www.workable.com/spi/v3/accounts/subdomain/jobs')
+        stub_request(:get, 'https://subdomain.workable.com/spi/v3/jobs')
           .to_return(status: 401, body: '{"error":"Not authorized"}')
 
         expect { client.jobs }.to raise_error(Workable::Errors::NotAuthorized)
       end
 
       it 'raises exception when status code differs from 200' do
-        stub_request(:get, 'https://www.workable.com/spi/v3/accounts/subdomain/jobs')
+        stub_request(:get, 'https://subdomain.workable.com/spi/v3/jobs')
           .to_return(status: 500, body: '')
 
         expect { client.jobs }.to raise_error(Workable::Errors::InvalidResponse)
@@ -115,14 +115,14 @@ describe Workable::Client do
 
   describe '#job_details' do
     it 'returns details of given job' do
-      stub_request(:get, 'https://www.workable.com/spi/v3/accounts/subdomain/jobs/03FF356C8B')
+      stub_request(:get, 'https://subdomain.workable.com/spi/v3/jobs/03FF356C8B')
         .to_return(status: 200, body: job_json_fixture)
 
       expect(client.job_details('03FF356C8B')).to be_kind_of(Hash)
     end
 
     it 'raises an exception when job is not found' do
-      stub_request(:get, 'https://www.workable.com/spi/v3/accounts/subdomain/jobs/invalid')
+      stub_request(:get, 'https://subdomain.workable.com/spi/v3/jobs/invalid')
         .to_return(status: 404, body: '{"error":"Not found"}')
 
       expect { client.job_details('invalid') }.to raise_error(Workable::Errors::NotFound)
@@ -131,7 +131,7 @@ describe Workable::Client do
 
   describe '#job_questions' do
     it 'returns questions for given job' do
-      stub_request(:get, 'https://www.workable.com/spi/v3/accounts/subdomain/jobs/03FF356C8B/questions')
+      stub_request(:get, 'https://subdomain.workable.com/spi/v3/jobs/03FF356C8B/questions')
         .to_return(status: 200, body: job_questions_json_fixture)
 
       questions = client.job_questions('03FF356C8B')
@@ -142,7 +142,7 @@ describe Workable::Client do
 
   describe '#job_application_form' do
     it 'returns application form for given job' do
-      stub_request(:get, 'https://www.workable.com/spi/v3/accounts/subdomain/jobs/03FF356C8B/application_form')
+      stub_request(:get, 'https://subdomain.workable.com/spi/v3/jobs/03FF356C8B/application_form')
         .to_return(status: 200, body: job_application_form_fixture)
 
       form = client.job_application_form('03FF356C8B')
@@ -160,7 +160,7 @@ describe Workable::Client do
 
   describe '#job_members' do
     it "returns array of job's members" do
-      stub_request(:get, 'https://www.workable.com/spi/v3/accounts/subdomain/jobs/job_slug/members')
+      stub_request(:get, 'https://subdomain.workable.com/spi/v3/jobs/job_slug/members')
         .to_return(status: 200, body: members_json_fixture)
 
       expect(client.job_members('job_slug')).to be_kind_of(Array)
@@ -176,7 +176,7 @@ describe Workable::Client do
 
   describe 'job_recruiters' do
     it "returns array of job's recruiters" do
-      stub_request(:get, 'https://www.workable.com/spi/v3/accounts/subdomain/jobs/job_slug/recruiters')
+      stub_request(:get, 'https://subdomain.workable.com/spi/v3/jobs/job_slug/recruiters')
         .to_return(status: 200, body: recruiters_json_fixture)
 
       expect(client.job_recruiters('job_slug')).to be_kind_of(Array)
@@ -192,7 +192,7 @@ describe Workable::Client do
     context 'happy path' do
       let(:candidates){ client.job_candidates('03FF356C8B') }
       before do
-        stub_request(:get, 'https://www.workable.com/spi/v3/accounts/subdomain/jobs/03FF356C8B/candidates')
+        stub_request(:get, 'https://subdomain.workable.com/spi/v3/jobs/03FF356C8B/candidates')
           .to_return(status: 200, body: job_candidates_json_fixture)
       end
 
@@ -202,7 +202,7 @@ describe Workable::Client do
       end
 
       it 'includes next page method that returns next collection' do
-        stub_request(:get, 'https://www.workable.com/spi/v3/accounts/subdomain/jobs/subdomain/candidates?limit=3&since_id=2700d6df')
+        stub_request(:get, 'https://subdomain.workable.com/spi/v3/candidates?limit=3&since_id=2700d6df')
           .with(headers: headers)
           .to_return(status: 200, body: job_candidates_json_fixture)
 
@@ -214,7 +214,7 @@ describe Workable::Client do
 
     context 'sad path' do
       it 'raises exception on to long requests' do
-        stub_request(:get, 'https://www.workable.com/spi/v3/accounts/subdomain/jobs/03FF356C8B/candidates')
+        stub_request(:get, 'https://subdomain.workable.com/spi/v3/jobs/03FF356C8B/candidates')
           .to_return(status: 503, body: '{"error":"Not authorized"}')
 
         expect { client.job_candidates('03FF356C8B') }.to raise_error(Workable::Errors::RequestToLong)
@@ -224,7 +224,7 @@ describe Workable::Client do
 
   describe '#job_candidate' do
     it 'returns detailed info about given candidate' do
-      stub_request(:get, 'https://www.workable.com/spi/v3/accounts/subdomain/jobs/job-slug/candidates/some-id')
+      stub_request(:get, 'https://subdomain.workable.com/spi/v3/jobs/job-slug/candidates/some-id')
         .to_return(status: 200, body: job_candidate_json_fixture)
 
       expect(client.job_candidate('job-slug', 'some-id')['name']).to eq('Cindy Sawyers')
@@ -233,7 +233,7 @@ describe Workable::Client do
 
   describe '#create_job_candidate' do
     it 'POSTs requests and parses response' do
-      stub_request(:post, 'https://www.workable.com/spi/v3/accounts/subdomain/jobs/slug/candidates')
+      stub_request(:post, 'https://subdomain.workable.com/spi/v3/jobs/slug/candidates')
         .with(body: new_candidate_hash_fixture.to_json)
         .to_return(status: 200, body: new_candidate_response_json_fixture)
 
@@ -258,7 +258,7 @@ describe Workable::Client do
     end
 
     it 'submits POST request' do
-      stub = stub_request(:post, 'https://www.workable.com/spi/v3/accounts/subdomain/candidates/123456/comments')
+      stub = stub_request(:post, 'https://subdomain.workable.com/spi/v3/candidates/123456/comments')
         .with(body: body.to_json)
 
       client.create_comment(candidate_id, member_id, comment_text)
@@ -278,7 +278,7 @@ describe Workable::Client do
     end
 
     it 'submits POST request' do
-      stub = stub_request(:post, 'https://www.workable.com/spi/v3/accounts/subdomain/candidates/123456/disqualify')
+      stub = stub_request(:post, 'https://subdomain.workable.com/spi/v3/candidates/123456/disqualify')
         .with(body: body.to_json)
 
       client.disqualify(candidate_id, member_id, reason)
@@ -294,7 +294,7 @@ describe Workable::Client do
     end
 
     it 'submits POST request' do
-      stub = stub_request(:post, 'https://www.workable.com/spi/v3/accounts/subdomain/candidates/123456/revert')
+      stub = stub_request(:post, 'https://subdomain.workable.com/spi/v3/candidates/123456/revert')
         .with(body: body.to_json)
 
       client.revert(candidate_id, member_id)
@@ -316,7 +316,7 @@ describe Workable::Client do
     end
 
     it 'POSTs requests and parses response' do
-      stub_request(:post, 'https://www.workable.com/spi/v3/accounts/subdomain/candidates/123456/copy')
+      stub_request(:post, 'https://subdomain.workable.com/spi/v3/candidates/123456/copy')
         .with(body: body.to_json)
         .to_return(status: 201, body: copy_candidate_response_json_fixture)
 
@@ -339,7 +339,7 @@ describe Workable::Client do
     end
 
     it 'POSTs requests and parses response' do
-      stub_request(:post, 'https://www.workable.com/spi/v3/accounts/subdomain/candidates/123456/relocate')
+      stub_request(:post, 'https://subdomain.workable.com/spi/v3/candidates/123456/relocate')
         .with(body: body.to_json)
         .to_return(status: 201, body: relocate_candidate_response_json_fixture)
 
@@ -360,7 +360,7 @@ describe Workable::Client do
     end
 
     it 'submits POST request' do
-      stub = stub_request(:post, 'https://www.workable.com/spi/v3/accounts/subdomain/candidates/123456/move')
+      stub = stub_request(:post, 'https://subdomain.workable.com/spi/v3/candidates/123456/move')
         .with(body: body.to_json)
 
       client.move(candidate_id, member_id, stage)
@@ -382,7 +382,7 @@ describe Workable::Client do
     end
 
     it 'submits POST request' do
-      stub = stub_request(:post, 'https://www.workable.com/spi/v3/accounts/subdomain/candidates/123456/ratings')
+      stub = stub_request(:post, 'https://subdomain.workable.com/spi/v3/candidates/123456/ratings')
         .with(body: body.to_json)
 
       client.create_rating(candidate_id, member_id, comment, score)
